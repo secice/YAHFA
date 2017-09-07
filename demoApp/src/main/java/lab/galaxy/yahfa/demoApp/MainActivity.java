@@ -19,6 +19,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         Button button = (Button)findViewById(R.id.button);
+        final Context context = this;
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -33,6 +34,7 @@ public class MainActivity extends Activity {
                 Log.w("origin", "static tac a,b,c,d, got "+
                         ClassWithStaticMethod.tac("a","b","c","d"));
                 Log.w("origin", "JNI method return string: "+ClassWithJNIMethod.fromJNI());
+                Toast.makeText(context, "test", Toast.LENGTH_LONG).show();
             }
         });
     }
