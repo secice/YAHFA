@@ -7,8 +7,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * Created by liuruikai756 on 28/03/2017.
@@ -16,12 +14,10 @@ import java.util.List;
 
 public class HookMain {
     private static final String TAG = "YAHFA";
-    private static List<Class<?>> hookInfoClasses = new LinkedList<>();
 
     static {
         System.loadLibrary("yahfa");
         init(android.os.Build.VERSION.SDK_INT);
-        HookMethodResolver.init();
     }
 
     public static void doHookDefault(ClassLoader patchClassLoader, ClassLoader originClassLoader) {
@@ -31,7 +27,6 @@ public class HookMain {
             for (String hookItemName : hookItemNames) {
                 doHookItemDefault(patchClassLoader, hookItemName, originClassLoader);
             }
-            hookInfoClasses.add(hookInfoClass);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -106,9 +101,7 @@ public class HookMain {
             // backup is just a placeholder and the constraint could be less strict
             checkCompatibleMethods(target, backup, "Original", "Backup");
         }
-        if (backup != null) {
-            HookMethodResolver.resolveMethod(hook, backup);
-        }
+
         if (!backupAndHookNative(target, hook, backup)) {
             throw new RuntimeException("Failed to hook " + target + " with " + hook);
         }
@@ -172,8 +165,6 @@ public class HookMain {
     }
 
     private static native boolean backupAndHookNative(Object target, Method hook, Method backup);
-
-    public static native void ensureMethodCached(Method hook, Method backup);
 
     // JNI.ToReflectedMethod() could return either Method or Constructor
     public static native Object findMethodNative(Class targetClass, String methodName, String methodSig);
